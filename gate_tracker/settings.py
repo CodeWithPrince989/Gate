@@ -180,7 +180,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ── CORS ──
 # In production, set CORS_ALLOWED_ORIGINS env var (comma-separated).
-# Example: https://gate-tracker.vercel.app
+# Example: https://gatepreperationtracker.vercel.app
 _cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '')
 if _cors_origins:
     CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()]

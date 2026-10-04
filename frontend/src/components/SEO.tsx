@@ -8,7 +8,7 @@ interface Props {
     type?: 'website' | 'article'
 }
 
-const BASE_URL = 'https://gate-tracker-wzwf.vercel.app'
+const BASE_URL = 'https://gatepreperationtracker.vercel.app'
 const OG_IMAGE = `${BASE_URL}/og-image.png`
 const SITE_NAME = 'GateTracker'
 const DEFAULT_KEYWORDS = 'GATE CSE tracker, GATE 2027 preparation, GATE study planner, GATE CSE study tracker free, GATE progress tracker'

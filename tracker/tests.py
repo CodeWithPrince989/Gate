@@ -59,7 +59,7 @@ class FeedbackViewTests(TestCase):
 
 @override_settings(
     SECRET_KEY='test-secret-key',
-    FRONTEND_URL='https://gate-tracker-wzwf.vercel.app',
+    FRONTEND_URL='https://gatepreperationtracker.vercel.app',
 )
 class SecurityHardeningTests(TestCase):
     def setUp(self):
@@ -163,7 +163,7 @@ class SecurityHardeningTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], 'https://gate-tracker-wzwf.vercel.app/?error=invalid_state')
+        self.assertEqual(response['Location'], 'https://gatepreperationtracker.vercel.app/?error=invalid_state')
 
     def test_github_oauth_start_sets_state_in_session(self):
         response = self.client.get(reverse('tracker:oauth_github_start'))
