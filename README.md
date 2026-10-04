@@ -6,6 +6,8 @@ GateTracker is a comprehensive, full-stack study analytics and tracking platform
 
 GateTracker enables students to log their study sessions, track topics covered, monitor their daily streak, and visualize their progress over time. Built with a robust Django REST backend and a modern React frontend, the platform ensures a seamless, responsive, and cross-platform user experience.
 
+The React application also includes a Placement Preparation workspace alongside the GATE 2027 Command Center. Placement skill assessments, DSA practice logs, projects, company preparation and applications are saved in the browser on the current device; the existing GATE tracker and its workflows remain separate and unchanged. Readiness values are internal progress indicators and do not predict interview selection or guarantee employment.
+
 ## 🏗️ Architecture
 
 The system follows a typical client-server architecture with a decoupled frontend and backend:
