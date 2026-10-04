@@ -1,9 +1,13 @@
 /**
  * API service for the GATE Study Tracker.
- * In production, set VITE_API_URL to your Render backend URL.
+ * VITE_API_URL can override the backend URL for non-default deployments.
  */
 
-export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const DEFAULT_API_BASE = import.meta.env.PROD
+    ? 'https://gate-kz5e.onrender.com'
+    : 'http://localhost:8000';
+
+export const API_BASE = (import.meta.env.VITE_API_URL || DEFAULT_API_BASE).replace(/\/+$/, '');
 
 // Always send session cookies (needed for cross-origin Vercel→Render)
 const OPTS: RequestInit = { credentials: 'include' };

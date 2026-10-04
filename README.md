@@ -110,6 +110,10 @@ To run GateTracker locally, follow these instructions:
    npm run dev
    ```
 
+The frontend uses `http://localhost:8000` for local development and
+`https://gate-kz5e.onrender.com` in production by default. Set
+`VITE_API_URL` at build time to use a different backend.
+
 ## 📂 Project Structure
 
 ```text
