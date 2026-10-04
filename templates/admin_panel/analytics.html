@@ -1,0 +1,42 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="glass-card p-5"><span class="text-xs text-slate-400 uppercase tracking-wider">DAU</span><p class="text-2xl font-bold text-white mt-2">{{ dau }}</p></div>
+    <div class="glass-card p-5"><span class="text-xs text-slate-400 uppercase tracking-wider">WAU</span><p class="text-2xl font-bold text-white mt-2">{{ wau }}</p></div>
+    <div class="glass-card p-5"><span class="text-xs text-slate-400 uppercase tracking-wider">MAU</span><p class="text-2xl font-bold text-white mt-2">{{ mau }}</p></div>
+    <div class="glass-card p-5"><span class="text-xs text-slate-400 uppercase tracking-wider">Retention</span><p class="text-2xl font-bold text-white mt-2">{{ retention }}%</p></div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+    <div class="glass-card p-5"><span class="text-xs text-slate-400 uppercase tracking-wider">Avg Session</span><p class="text-2xl font-bold text-white mt-2">{{ avg_study_mins }}m</p></div>
+    <div class="glass-card p-5"><span class="text-xs text-slate-400 uppercase tracking-wider">Total Hours</span><p class="text-2xl font-bold text-white mt-2">{{ total_hours }}h</p></div>
+</div>
+
+<div class="flex justify-end mb-6">
+    <a href="{% url 'admin_panel:export_csv' %}" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Export CSV
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">🔥 Most Active Users</h3>
+        <div class="space-y-3">{% for u in most_active %}
+        <div class="flex items-center justify-between py-2 border-b border-slate-800/50">
+            <div class="flex items-center gap-3"><span class="w-6 h-6 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs font-bold">{{ forloop.counter }}</span><span class="text-sm text-slate-200">{{ u.username }}</span></div>
+            <span class="text-sm text-slate-400">{% if u.total_mins %}{{ u.total_mins|divide:60|floatformat:1 }}h{% else %}0h{% endif %}</span>
+        </div>{% endfor %}</div>
+    </div>
+    <div class="glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">😴 Least Active Users</h3>
+        <div class="space-y-3">{% for u in least_active %}
+        <div class="flex items-center justify-between py-2 border-b border-slate-800/50">
+            <span class="text-sm text-slate-200">{{ u.username }}</span>
+            <span class="text-sm text-slate-400">{% if u.total_mins %}{{ u.total_mins|divide:60|floatformat:1 }}h{% else %}0h{% endif %}</span>
+        </div>{% endfor %}</div>
+    </div>
+</div>
+{% endblock %}

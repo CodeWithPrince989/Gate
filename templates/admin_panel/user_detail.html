@@ -1,0 +1,64 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="glass-card p-6 lg:col-span-2">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/25">{{ target_user.username|first|upper }}</div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">{{ target_user.username }}</h3>
+                    <p class="text-slate-400 text-sm">{{ target_user.email|default:"No email" }}</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                {% if target_user.is_active %}
+                <form method="POST" action="{% url 'admin_panel:user_action' target_user.id %}"><input type="hidden" name="action" value="ban">{% csrf_token %}<button class="px-3 py-2 rounded-lg bg-red-500/15 text-red-400 text-xs font-medium hover:bg-red-500/25 transition-colors">Ban User</button></form>
+                {% else %}
+                <form method="POST" action="{% url 'admin_panel:user_action' target_user.id %}"><input type="hidden" name="action" value="activate">{% csrf_token %}<button class="px-3 py-2 rounded-lg bg-emerald-500/15 text-emerald-400 text-xs font-medium hover:bg-emerald-500/25 transition-colors">Activate</button></form>
+                {% endif %}
+                <form method="POST" action="{% url 'admin_panel:user_action' target_user.id %}"><input type="hidden" name="action" value="upgrade_premium">{% csrf_token %}<button class="px-3 py-2 rounded-lg bg-amber-500/15 text-amber-400 text-xs font-medium hover:bg-amber-500/25 transition-colors">⭐ Upgrade Premium</button></form>
+                {% if not target_user.is_staff %}
+                <form method="POST" action="{% url 'admin_panel:user_action' target_user.id %}"><input type="hidden" name="action" value="make_staff">{% csrf_token %}<button class="px-3 py-2 rounded-lg bg-indigo-500/15 text-indigo-400 text-xs font-medium hover:bg-indigo-500/25 transition-colors">Make Staff</button></form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-4 mb-6">
+            <div class="p-4 rounded-xl bg-slate-800/30 text-center"><p class="text-xs text-slate-400 mb-1">Study Hours</p><p class="text-lg font-bold text-white">{{ total_hours }}h</p></div>
+            <div class="p-4 rounded-xl bg-slate-800/30 text-center"><p class="text-xs text-slate-400 mb-1">Questions</p><p class="text-lg font-bold text-white">{{ total_questions }}</p></div>
+            <div class="p-4 rounded-xl bg-slate-800/30 text-center"><p class="text-xs text-slate-400 mb-1">Joined</p><p class="text-lg font-bold text-white">{{ target_user.date_joined|date:"M d" }}</p></div>
+            <div class="p-4 rounded-xl bg-slate-800/30 text-center"><p class="text-xs text-slate-400 mb-1">Premium</p><p class="text-lg font-bold {% if subscription %}text-amber-400{% else %}text-slate-500{% endif %}">{% if subscription %}Yes{% else %}No{% endif %}</p></div>
+        </div>
+    </div>
+    <div class="glass-card p-6">
+        <h4 class="text-sm font-semibold text-white mb-4">Account Details</h4>
+        <dl class="space-y-3 text-sm">
+            <div class="flex justify-between"><dt class="text-slate-400">Status</dt><dd>{% if target_user.is_active %}<span class="badge bg-emerald-500/15 text-emerald-400">Active</span>{% else %}<span class="badge bg-red-500/15 text-red-400">Banned</span>{% endif %}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-400">Staff</dt><dd class="text-slate-200">{% if target_user.is_staff %}Yes{% else %}No{% endif %}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-400">Superuser</dt><dd class="text-slate-200">{% if target_user.is_superuser %}Yes{% else %}No{% endif %}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-400">Last Login</dt><dd class="text-slate-200">{{ target_user.last_login|time_ago }}</dd></div>
+        </dl>
+    </div>
+</div>
+
+<div class="glass-card p-6">
+    <h4 class="text-base font-semibold text-white mb-4">Recent Sessions</h4>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead><tr class="text-slate-400 text-xs uppercase border-b border-slate-700/50">
+                <th class="text-left p-3 font-medium">Date</th><th class="text-left p-3 font-medium">Subject</th><th class="text-left p-3 font-medium">Type</th><th class="text-right p-3 font-medium">Duration</th><th class="text-right p-3 font-medium">Questions</th>
+            </tr></thead>
+            <tbody>{% for s in sessions %}
+            <tr class="border-b border-slate-800/50 hover:bg-slate-800/20">
+                <td class="p-3 text-slate-300">{{ s.date }}</td>
+                <td class="p-3 text-slate-300">{{ s.get_subject_display }}</td>
+                <td class="p-3"><span class="badge bg-indigo-500/15 text-indigo-400">{{ s.study_type }}</span></td>
+                <td class="p-3 text-right text-slate-300">{{ s.duration_minutes|floatformat:0 }}m</td>
+                <td class="p-3 text-right text-slate-300">{{ s.questions_solved }}</td>
+            </tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

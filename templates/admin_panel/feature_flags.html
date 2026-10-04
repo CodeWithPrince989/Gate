@@ -1,0 +1,41 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Add Feature Flag</h3>
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Feature Name" required class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <input type="text" name="slug" placeholder="feature-slug" required class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <textarea name="description" placeholder="Description..." rows="3" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center gap-2 text-sm text-slate-300"><input type="checkbox" name="is_enabled" class="rounded bg-slate-700 border-slate-600 text-indigo-500 focus:ring-indigo-500"> Enabled</label>
+                <input type="number" name="rollout_percentage" value="100" min="0" max="100" class="bg-slate-800/50 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Rollout %">
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold transition-colors">Save Feature Flag</button>
+        </form>
+    </div>
+    <div class="lg:col-span-2 glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Feature Flags</h3>
+        <div class="space-y-3">{% for f in flags %}
+        <div class="flex items-center justify-between p-4 rounded-xl bg-slate-800/20 border border-slate-700/30 hover:border-slate-600/50 transition-colors">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl {% if f.is_enabled %}bg-emerald-500/15{% else %}bg-slate-700/50{% endif %} flex items-center justify-center">
+                    {% if f.is_enabled %}<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    {% else %}<svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>{% endif %}
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-white">{{ f.name }}</h4>
+                    <p class="text-xs text-slate-500">{{ f.slug }} · {{ f.rollout_percentage }}% rollout</p>
+                    {% if f.description %}<p class="text-xs text-slate-400 mt-1">{{ f.description|truncatewords:15 }}</p>{% endif %}
+                </div>
+            </div>
+            <form method="POST" action="{% url 'admin_panel:feature_flag_toggle' f.id %}">{% csrf_token %}
+                <button class="px-4 py-2 rounded-xl text-sm font-medium transition-all {% if f.is_enabled %}bg-red-500/10 text-red-400 hover:bg-red-500/20{% else %}bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20{% endif %}">{% if f.is_enabled %}Disable{% else %}Enable{% endif %}</button>
+            </form>
+        </div>{% empty %}<p class="text-sm text-slate-500">No feature flags configured. Create one to get started.</p>{% endfor %}</div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 mb-8">
+    <div class="glass-card stat-card p-5 animate-in" style="animation-delay:.05s">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Users</span>
+            <span class="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center"><svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ total_users }}</p>
+        <p class="text-xs text-emerald-400 mt-1">+{{ users_this_week }} this week</p>
+    </div>
+    <div class="glass-card stat-card p-5 animate-in" style="animation-delay:.1s">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Active Today</span>
+            <span class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></span>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ active_today }}</p>
+        <p class="text-xs text-slate-400 mt-1">{{ active_week }} this week</p>
+    </div>
+    <div class="glass-card stat-card p-5 animate-in" style="animation-delay:.15s">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Study Hours</span>
+            <span class="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center"><svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ total_hours }}h</p>
+        <p class="text-xs text-slate-400 mt-1">{{ sessions_today }} sessions today</p>
+    </div>
+    <div class="glass-card stat-card p-5 animate-in" style="animation-delay:.2s">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Questions</span>
+            <span class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center"><svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></span>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ total_questions }}</p>
+        <p class="text-xs text-slate-400 mt-1">across {{ total_sessions }} sessions</p>
+    </div>
+    <div class="glass-card stat-card p-5 animate-in" style="animation-delay:.25s">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Premium</span>
+            <span class="w-8 h-8 rounded-lg bg-yellow-500/15 flex items-center justify-center"><svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg></span>
+        </div>
+        <p class="text-2xl font-bold text-white">{{ premium_users }}</p>
+        <p class="text-xs text-emerald-400 mt-1">₹{{ total_revenue }} revenue</p>
+    </div>
+    <div class="glass-card stat-card p-5 animate-in" style="animation-delay:.3s">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Growth</span>
+            <span class="w-8 h-8 rounded-lg bg-cyan-500/15 flex items-center justify-center"><svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></span>
+        </div>
+        <p class="text-2xl font-bold text-white">{% if growth_pct > 0 %}+{% endif %}{{ growth_pct }}%</p>
+        <p class="text-xs text-slate-400 mt-1">{{ users_today }} new today</p>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="glass-card p-6 animate-in" style="animation-delay:.35s">
+        <h3 class="text-base font-semibold text-white mb-4">User Growth <span class="text-xs text-slate-400 ml-2">Last 14 days</span></h3>
+        <div style="position:relative;height:260px"><canvas id="growthChart"></canvas></div>
+    </div>
+    <div class="glass-card p-6 animate-in" style="animation-delay:.4s">
+        <h3 class="text-base font-semibold text-white mb-4">Daily Active Users <span class="text-xs text-slate-400 ml-2">Last 14 days</span></h3>
+        <div style="position:relative;height:260px"><canvas id="dauChart"></canvas></div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="glass-card p-6 animate-in" style="animation-delay:.45s">
+        <h3 class="text-base font-semibold text-white mb-4">Popular Subjects</h3>
+        <div style="position:relative;height:260px"><canvas id="subjectChart"></canvas></div>
+    </div>
+    <div class="glass-card p-6 lg:col-span-2 animate-in" style="animation-delay:.5s">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold text-white">Recent Users</h3>
+            <a href="{% url 'admin_panel:users' %}" class="text-xs text-indigo-400 hover:text-indigo-300">View all →</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead><tr class="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700/50">
+                    <th class="text-left pb-3 font-medium">User</th>
+                    <th class="text-left pb-3 font-medium">Email</th>
+                    <th class="text-left pb-3 font-medium">Joined</th>
+                    <th class="text-left pb-3 font-medium">Status</th>
+                </tr></thead>
+                <tbody>{% for u in recent_users %}
+                <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <td class="py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">{{ u.username|first|upper }}</div><span class="text-slate-200">{{ u.username }}</span></div></td>
+                    <td class="py-3 text-slate-400">{{ u.email|default:"—" }}</td>
+                    <td class="py-3 text-slate-400">{{ u.date_joined|date:"M d" }}</td>
+                    <td class="py-3">{% if u.is_active %}<span class="badge bg-emerald-500/15 text-emerald-400">Active</span>{% else %}<span class="badge bg-red-500/15 text-red-400">Inactive</span>{% endif %}</td>
+                </tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="glass-card p-6 animate-in" style="animation-delay:.55s">
+        <h3 class="text-base font-semibold text-white mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <a href="{% url 'admin_panel:users' %}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg><span class="text-sm text-slate-300">Manage Users</span></a>
+            <a href="{% url 'admin_panel:announcements' %}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors"><svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg><span class="text-sm text-slate-300">Send Alert</span></a>
+            <a href="{% url 'admin_panel:reports' %}" class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors"><svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm text-slate-300">{{ open_reports }} Open Reports</span></a>
+            <a href="{% url 'admin_panel:analytics' %}export/" class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors"><svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span class="text-sm text-slate-300">Export CSV</span></a>
+        </div>
+    </div>
+    <div class="glass-card p-6 animate-in" style="animation-delay:.6s">
+        <h3 class="text-base font-semibold text-white mb-4">Recent Sessions</h3>
+        <div class="space-y-3">{% for s in recent_sessions %}
+            <div class="flex items-center justify-between py-2 border-b border-slate-800/50">
+                <div class="flex items-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-purple-500/15 flex items-center justify-center text-purple-400 text-xs font-bold">{{ s.subject|truncatechars:2 }}</span>
+                    <div><p class="text-sm text-slate-200">{{ s.user.username|default:"—" }}</p><p class="text-xs text-slate-500">{{ s.get_subject_display }}</p></div>
+                </div>
+                <div class="text-right"><p class="text-sm text-slate-300">{{ s.duration_minutes|floatformat:0 }}m</p><p class="text-xs text-slate-500">{{ s.questions_solved }}q</p></div>
+            </div>
+        {% endfor %}</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const chartDefaults = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(51,65,85,.3)', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 11 } } }, y: { grid: { color: 'rgba(51,65,85,.3)', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 11 } } } } };
+
+// User Growth Chart
+new Chart(document.getElementById('growthChart'), {
+    type: 'bar',
+    data: { labels: {{ growth_labels_json|safe }}, datasets: [{ data: {{ growth_data_json|safe }}, backgroundColor: 'rgba(99,102,241,.5)', borderColor: '#818cf8', borderWidth: 1, borderRadius: 6, barPercentage: .6 }] },
+    options: { ...chartDefaults }
+});
+
+// DAU Chart
+new Chart(document.getElementById('dauChart'), {
+    type: 'line',
+    data: { labels: {{ growth_labels_json|safe }}, datasets: [{ data: {{ dau_data_json|safe }}, borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,.1)', tension: .4, fill: true, pointBackgroundColor: '#34d399', pointRadius: 3 }] },
+    options: { ...chartDefaults }
+});
+
+// Subject Chart
+new Chart(document.getElementById('subjectChart'), {
+    type: 'doughnut',
+    data: { labels: {{ subject_labels_json|safe }}, datasets: [{ data: {{ subject_values_json|safe }}, backgroundColor: ['#818cf8','#34d399','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#f97316'], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', padding: 12, font: { size: 11 } } } }, cutout: '65%' }
+});
+</script>
+{% endblock %}

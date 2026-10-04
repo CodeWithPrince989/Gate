@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: gate-tracker-api
+    runtime: python
+    plan: free
+    healthCheckPath: /api/health/
+    buildCommand: "chmod +x build.sh && ./build.sh"
+    startCommand: "gunicorn gate_tracker.wsgi:application --bind 0.0.0.0:$PORT --workers ${WEB_CONCURRENCY:-1} --log-file -"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: FRONTEND_URL
+        value: "https://gate-tracker-wzwf.vercel.app"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://gate-tracker-wzwf.vercel.app"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://gate-tracker-wzwf.vercel.app"
+      - key: GEMINI_MODEL
+        value: "gemini-1.5-flash"
+      - key: GEMINI_API_VERSION
+        value: "v1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gate-tracker-db
+          property: connectionString
+
+databases:
+  - name: gate-tracker-db
+    plan: free
+    databaseName: gate_tracker

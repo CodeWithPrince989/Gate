@@ -1,0 +1,51 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<div class="flex items-center gap-3 mb-6">
+    <a href="?status=" class="px-3 py-2 rounded-lg text-sm {% if not status_filter %}bg-indigo-600 text-white{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">All</a>
+    <a href="?status=open" class="px-3 py-2 rounded-lg text-sm {% if status_filter == 'open' %}bg-indigo-600 text-white{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">Open</a>
+    <a href="?status=in_progress" class="px-3 py-2 rounded-lg text-sm {% if status_filter == 'in_progress' %}bg-indigo-600 text-white{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">In Progress</a>
+    <a href="?status=resolved" class="px-3 py-2 rounded-lg text-sm {% if status_filter == 'resolved' %}bg-indigo-600 text-white{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">Resolved</a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Reports & Issues</h3>
+        <div class="space-y-3">{% for r in reports %}
+        <div class="p-4 rounded-xl bg-slate-800/20 border border-slate-700/30 hover:border-slate-600/50 transition-colors">
+            <div class="flex items-start justify-between mb-2">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="badge bg-{{ r.category|status_color }}-500/15 text-{{ r.category|status_color }}-400">{{ r.get_category_display }}</span>
+                        <span class="badge bg-{{ r.priority|status_color }}-500/15 text-{{ r.priority|status_color }}-400">{{ r.get_priority_display }}</span>
+                        <span class="badge bg-{{ r.status|status_color }}-500/15 text-{{ r.status|status_color }}-400">{{ r.get_status_display }}</span>
+                    </div>
+                    <h4 class="text-sm font-medium text-white">{{ r.title }}</h4>
+                    <p class="text-xs text-slate-400 mt-1">{{ r.description|truncatewords:30 }}</p>
+                    <p class="text-xs text-slate-500 mt-2">by {{ r.user.username }} · {{ r.created_at|time_ago }}</p>
+                </div>
+                {% if r.status != 'resolved' and r.status != 'closed' %}
+                <form method="POST" action="{% url 'admin_panel:report_action' r.id %}" class="flex gap-1">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="resolve">
+                    <button class="text-xs text-emerald-400 hover:text-emerald-300 px-2 py-1 rounded-lg hover:bg-emerald-500/10">✓ Resolve</button>
+                </form>
+                {% endif %}
+            </div>
+            {% if r.admin_reply %}<div class="mt-2 p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-300">💬 {{ r.admin_reply }}</div>{% endif %}
+        </div>{% empty %}<p class="text-sm text-slate-500">No reports found.</p>{% endfor %}</div>
+    </div>
+    <div class="glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Community Feedback</h3>
+        <div class="space-y-3">{% for f in feedbacks %}
+        <div class="p-3 rounded-xl bg-slate-800/20 border border-slate-700/30">
+            <p class="text-sm text-slate-300">{{ f.message|truncatewords:20 }}</p>
+            <div class="flex items-center justify-between mt-2">
+                <span class="text-xs text-slate-500">{{ f.name|default:"Anonymous" }}</span>
+                <span class="text-xs text-slate-400">👍 {{ f.upvotes }}</span>
+            </div>
+        </div>{% empty %}<p class="text-sm text-slate-500">No feedback yet.</p>{% endfor %}</div>
+    </div>
+</div>
+{% endblock %}

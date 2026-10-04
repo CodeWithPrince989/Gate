@@ -1,0 +1,61 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <p class="text-slate-400 text-sm">{{ total_users }} total users</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <form method="GET" class="flex gap-2">
+            <input type="text" name="q" value="{{ search }}" placeholder="Search users..." class="bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-64">
+            <select name="status" class="bg-slate-800/50 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                <option value="">All Status</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                <option value="staff" {% if status_filter == 'staff' %}selected{% endif %}>Staff</option>
+            </select>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">Filter</button>
+        </form>
+    </div>
+</div>
+
+<div class="glass-card overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead><tr class="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700/50 bg-slate-800/30">
+                <th class="text-left p-4 font-medium">User</th>
+                <th class="text-left p-4 font-medium">Email</th>
+                <th class="text-left p-4 font-medium">Joined</th>
+                <th class="text-left p-4 font-medium">Last Active</th>
+                <th class="text-right p-4 font-medium">Study Hours</th>
+                <th class="text-right p-4 font-medium">Questions</th>
+                <th class="text-right p-4 font-medium">Sessions</th>
+                <th class="text-left p-4 font-medium">Status</th>
+                <th class="text-left p-4 font-medium">Actions</th>
+            </tr></thead>
+            <tbody>{% for u in users %}
+            <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors">
+                <td class="p-4"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">{{ u.username|first|upper }}</div><div><p class="text-slate-200 font-medium">{{ u.username }}</p>{% if u.is_staff %}<span class="text-xs text-indigo-400">Staff</span>{% endif %}</div></div></td>
+                <td class="p-4 text-slate-400">{{ u.email|default:"—" }}</td>
+                <td class="p-4 text-slate-400">{{ u.date_joined|date:"M d, Y" }}</td>
+                <td class="p-4 text-slate-400">{{ u.last_login|time_ago }}</td>
+                <td class="p-4 text-right text-slate-300">{% if u.total_study_mins %}{{ u.total_study_mins|divide:60|floatformat:1 }}h{% else %}0h{% endif %}</td>
+                <td class="p-4 text-right text-slate-300">{{ u.total_questions|default:0 }}</td>
+                <td class="p-4 text-right text-slate-300">{{ u.session_count|default:0 }}</td>
+                <td class="p-4">{% if u.is_active %}<span class="badge bg-emerald-500/15 text-emerald-400">Active</span>{% else %}<span class="badge bg-red-500/15 text-red-400">Banned</span>{% endif %}</td>
+                <td class="p-4"><a href="{% url 'admin_panel:user_detail' u.id %}" class="text-indigo-400 hover:text-indigo-300 text-xs font-medium">View →</a></td>
+            </tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if total_pages > 1 %}
+<div class="flex items-center justify-center gap-2 mt-6">
+    {% if page > 1 %}<a href="?page={{ page|add:"-1" }}&q={{ search }}&status={{ status_filter }}" class="px-3 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm hover:bg-slate-700">← Prev</a>{% endif %}
+    {% for p in page_range %}<a href="?page={{ p }}&q={{ search }}&status={{ status_filter }}" class="px-3 py-2 rounded-lg text-sm {% if p == page %}bg-indigo-600 text-white{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">{{ p }}</a>{% endfor %}
+    {% if page < total_pages %}<a href="?page={{ page|add:"1" }}&q={{ search }}&status={{ status_filter }}" class="px-3 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm hover:bg-slate-700">Next →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

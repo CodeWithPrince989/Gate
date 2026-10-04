@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Start Study — GATE Tracker{% endblock %}
+{% block extra_head %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7787607648836537"
+        crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-8">
+
+    <!-- Header -->
+    <div class="text-center">
+        <h1 class="text-3xl font-extrabold tracking-tight">Study Timer</h1>
+        <p class="text-gray-400 mt-1">Focus. Track. Improve.</p>
+    </div>
+
+    <!-- ── Timer display ────────────────────── -->
+    <div class="relative mx-auto w-72 h-72 flex items-center justify-center">
+        <!-- Glow ring -->
+        <div id="timer-ring"
+            class="absolute inset-0 rounded-full border-4 border-brand-500/20 transition-all duration-500"></div>
+        <div id="timer-ring-active"
+            class="absolute inset-0 rounded-full border-4 border-transparent transition-all duration-500"></div>
+        <!-- Time -->
+        <span id="timer-display" class="text-6xl font-extrabold tracking-tight tabular-nums">00:00:00</span>
+    </div>
+
+    <!-- ── Controls ─────────────────────────── -->
+    <div class="flex justify-center gap-4">
+        <button id="btn-start" onclick="timerStart()"
+            class="px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm transition-all shadow-lg shadow-brand-600/20 active:scale-95">
+            ▶ Start
+        </button>
+        <button id="btn-pause" onclick="timerPause()" disabled
+            class="px-8 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95">
+            ⏸ Pause
+        </button>
+        <button id="btn-stop" onclick="timerStop()" disabled
+            class="px-8 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95">
+            ⏹ Stop
+        </button>
+    </div>
+
+    <!-- ── Session save form (hidden until Stop) ── -->
+    <div id="session-form" class="hidden animate-slide-up">
+        <div class="bg-surface-800 rounded-2xl border border-white/5 p-6 space-y-5">
+            <h2 class="text-lg font-bold text-center">Session Details</h2>
+            <p id="form-duration" class="text-center text-gray-400 text-sm"></p>
+
+            <!-- Subject -->
+            <div>
+                <label
+                    class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Subject</label>
+                <select id="field-subject" class="form-input">
+                    {% for code, name in subjects %}
+                    <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Study type -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Study
+                    Type</label>
+                <select id="field-type" class="form-input">
+                    {% for code, name in types %}
+                    <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Questions & Lecture -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Questions
+                        Solved</label>
+                    <input type="number" id="field-questions" value="0" min="0" class="form-input">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Lecture
+                        Minutes</label>
+                    <input type="number" id="field-lectures" value="0" min="0" class="form-input">
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="flex items-center gap-3">
+                <input type="checkbox" id="field-notes"
+                    class="w-5 h-5 rounded bg-surface-700 border-white/10 text-brand-500 focus:ring-brand-500/50">
+                <label for="field-notes" class="text-sm text-gray-300">Notes created during this session</label>
+            </div>
+
+            <!-- Save button -->
+            <button onclick="saveSession()" id="btn-save"
+                class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors shadow-lg shadow-emerald-600/20 active:scale-[.98]">
+                Save Session
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ── Timer state ──────────────────────────
+    let seconds = 0;
+    let timerInterval = null;
+    let isRunning = false;
+    let breakCounter = 0;
+
+    const display = document.getElementById('timer-display');
+    const ring = document.getElementById('timer-ring');
+    const ringActive = document.getElementById('timer-ring-active');
+    const btnStart = document.getElementById('btn-start');
+    const btnPause = document.getElementById('btn-pause');
+    const btnStop = document.getElementById('btn-stop');
+    const sessionForm = document.getElementById('session-form');
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function updateDisplay() {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        display.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    function timerStart() {
+        if (isRunning) return;
+        isRunning = true;
+        btnStart.disabled = true;
+        btnPause.disabled = false;
+        btnStop.disabled = false;
+        btnStart.classList.add('opacity-30', 'cursor-not-allowed');
+        btnPause.classList.remove('opacity-30', 'cursor-not-allowed');
+        btnStop.classList.remove('opacity-30', 'cursor-not-allowed');
+
+        // Glow effect
+        ringActive.classList.remove('border-transparent');
+        ringActive.classList.add('border-brand-500', 'animate-pulse');
+
+        sessionForm.classList.add('hidden');
+
+        timerInterval = setInterval(() => {
+            seconds++;
+            updateDisplay();
+
+            // Break reminder every 50 minutes (3000 seconds)
+            breakCounter++;
+            if (breakCounter >= 3000) {
+                breakCounter = 0;
+                const toast = document.getElementById('break-toast');
+                if (toast) {
+                    toast.classList.remove('hidden');
+                    setTimeout(() => toast.classList.add('hidden'), 15000);
+                }
+            }
+        }, 1000);
+    }
+
+    function timerPause() {
+        if (!isRunning) return;
+        isRunning = false;
+        clearInterval(timerInterval);
+        btnStart.disabled = false;
+        btnStart.classList.remove('opacity-30', 'cursor-not-allowed');
+        btnStart.textContent = '▶ Resume';
+        ringActive.classList.remove('animate-pulse');
+    }
+
+    function timerStop() {
+        if (seconds === 0) return;
+        isRunning = false;
+        clearInterval(timerInterval);
+        breakCounter = 0;
+
+        // Show form
+        document.getElementById('form-duration').textContent = `Duration: ${display.textContent}`;
+        sessionForm.classList.remove('hidden');
+
+        // Reset buttons
+        ringActive.classList.remove('border-brand-500', 'animate-pulse');
+        ringActive.classList.add('border-transparent');
+        btnStart.disabled = true;
+        btnPause.disabled = true;
+        btnStop.disabled = true;
+        btnStart.classList.add('opacity-30', 'cursor-not-allowed');
+        btnPause.classList.add('opacity-30', 'cursor-not-allowed');
+        btnStop.classList.add('opacity-30', 'cursor-not-allowed');
+    }
+
+    function saveSession() {
+        const payload = {
+            subject: document.getElementById('field-subject').value,
+            study_type: document.getElementById('field-type').value,
+            duration_seconds: seconds,
+            questions_solved: parseInt(document.getElementById('field-questions').value) || 0,
+            lecture_minutes: parseInt(document.getElementById('field-lectures').value) || 0,
+            notes_created: document.getElementById('field-notes').checked,
+        };
+
+        const saveBtn = document.getElementById('btn-save');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        fetch("{% url 'tracker:save_session' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify(payload),
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    // Reset everything
+                    seconds = 0;
+                    updateDisplay();
+                    sessionForm.classList.add('hidden');
+                    btnStart.disabled = false;
+                    btnStart.classList.remove('opacity-30', 'cursor-not-allowed');
+                    btnStart.textContent = '▶ Start';
+
+                    // Show success toast
+                    showToast('Session saved! 🎉', 'bg-emerald-600');
+                } else {
+                    showToast('Error saving session', 'bg-red-600');
+                }
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Session';
+            })
+            .catch(() => {
+                showToast('Network error', 'bg-red-600');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Session';
+            });
+    }
+
+    function showToast(msg, bgClass) {
+        const t = document.createElement('div');
+        t.className = `fixed bottom-6 right-6 z-50 ${bgClass} text-white px-6 py-3 rounded-xl shadow-2xl font-semibold text-sm animate-bounce-in`;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    }
+</script>
+{% endblock %}

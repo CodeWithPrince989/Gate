@@ -1,0 +1,126 @@
+<!-- Base template: dark sidebar layout with TailwindCSS + Chart.js CDN -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GATE Study Tracker{% endblock %}</title>
+
+    <!-- TailwindCSS (user-requested) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' },
+                        surface: { 800:'#1e1b2e', 900:'#13111c', 700:'#2a2740' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+
+    <!-- Ahrefs Web Analytics -->
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="Ag7yAz8xAVMMy8tC1Okx6w" async></script>
+
+    {% block extra_head %}{% endblock %}
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+</head>
+<body class="dark bg-surface-900 text-gray-100 font-['Manrope'] min-h-screen flex">
+
+    <!-- ── Sidebar ────────────────────────────── -->
+    <aside id="sidebar" class="fixed z-30 inset-y-0 left-0 w-64 bg-surface-800 border-r border-white/5 flex flex-col transition-transform duration-300 lg:translate-x-0 -translate-x-full">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 px-6 py-6 border-b border-white/5">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-extrabold text-sm">G</div>
+            <div>
+                <span class="font-bold text-base tracking-tight">GATE Tracker</span>
+                <span class="block text-[10px] text-gray-500 tracking-widest uppercase">Study Intelligence</span>
+            </div>
+        </div>
+
+        <!-- Nav links -->
+        <nav class="flex-1 px-3 py-4 space-y-1">
+            {% with request.resolver_match.url_name as current %}
+            <a href="{% url 'tracker:dashboard' %}"
+               class="nav-link {% if current == 'dashboard' %}active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zm0 9.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zm0 9.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z"/></svg>
+                Dashboard
+            </a>
+            <a href="{% url 'tracker:start_study' %}"
+               class="nav-link {% if current == 'start_study' %}active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Start Study
+            </a>
+            <a href="{% url 'tracker:analytics_page' %}"
+               class="nav-link {% if current == 'analytics_page' %}active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zm6-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v10.125c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 019 19.875V9.75zm6-4.125c0-.621.504-1.125 1.125-1.125h2.25C18.996 4.5 19.5 5.004 19.5 5.625v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V5.625z"/></svg>
+                Analytics
+            </a>
+            <a href="{% url 'tracker:history_page' %}"
+               class="nav-link {% if current == 'history_page' %}active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/></svg>
+                History
+            </a>
+            <a href="{% url 'tracker:export_csv' %}"
+               class="nav-link">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                Export CSV
+            </a>
+            {% endwith %}
+        </nav>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-white/5 text-xs text-gray-500">
+            GATE 2027 Prep &middot; v1.0
+        </div>
+    </aside>
+
+    <!-- Mobile hamburger -->
+    <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"
+            class="fixed z-40 top-4 left-4 lg:hidden bg-surface-700 p-2 rounded-lg text-gray-300 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+    </button>
+
+    <!-- ── Main content ─────────────────────── -->
+    <main class="flex-1 lg:ml-64 p-6 md:p-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Break reminder notification (every 50 min) -->
+    <div id="break-toast" class="hidden fixed bottom-6 right-6 z-50 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 animate-bounce-in">
+        <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+        <div>
+            <p class="font-bold">Time for a break! ☕</p>
+            <p class="text-sm opacity-90">You've been studying for 50 minutes. Rest for 10 minutes.</p>
+        </div>
+        <button onclick="this.parentElement.classList.add('hidden')" class="ml-4 text-white/70 hover:text-white">&times;</button>
+    </div>
+
+    <script>
+        // Break reminder: show toast every 50 minutes
+        let breakInterval = null;
+        function startBreakReminder() {
+            breakInterval = setInterval(() => {
+                const toast = document.getElementById('break-toast');
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 15000);
+            }, 50 * 60 * 1000); // 50 minutes
+        }
+        startBreakReminder();
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

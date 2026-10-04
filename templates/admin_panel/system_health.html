@@ -1,0 +1,72 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="glass-card p-5">
+        <span class="text-xs text-slate-400 uppercase tracking-wider">DB Response</span>
+        <p class="text-2xl font-bold {% if db_response_ms < 50 %}text-emerald-400{% elif db_response_ms < 200 %}text-amber-400{% else %}text-red-400{% endif %} mt-2">{{ db_response_ms }}ms</p>
+    </div>
+    <div class="glass-card p-5">
+        <span class="text-xs text-slate-400 uppercase tracking-wider">Total Users</span>
+        <p class="text-2xl font-bold text-white mt-2">{{ total_users }}</p>
+    </div>
+    <div class="glass-card p-5">
+        <span class="text-xs text-slate-400 uppercase tracking-wider">Total Sessions</span>
+        <p class="text-2xl font-bold text-white mt-2">{{ total_sessions }}</p>
+    </div>
+    <div class="glass-card p-5">
+        <span class="text-xs text-slate-400 uppercase tracking-wider">Failed Logins</span>
+        <p class="text-2xl font-bold {% if recent_errors > 10 %}text-red-400{% else %}text-white{% endif %} mt-2">{{ recent_errors }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">System Status</h3>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/20">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-sm text-slate-200">Django Application</span>
+                </div>
+                <span class="badge bg-emerald-500/15 text-emerald-400">Online</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/20">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-sm text-slate-200">Database</span>
+                </div>
+                <span class="badge bg-emerald-500/15 text-emerald-400">{{ db_response_ms }}ms</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/20">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                    <span class="text-sm text-slate-200">Static Files (WhiteNoise)</span>
+                </div>
+                <span class="badge bg-emerald-500/15 text-emerald-400">Active</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/20">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                    <span class="text-sm text-slate-200">CORS / CSRF</span>
+                </div>
+                <span class="badge bg-emerald-500/15 text-emerald-400">Configured</span>
+            </div>
+        </div>
+    </div>
+    <div class="glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">Health History</h3>
+        {% if snapshots %}
+        <div class="overflow-x-auto"><table class="w-full text-sm">
+            <thead><tr class="text-slate-400 text-xs uppercase border-b border-slate-700/50">
+                <th class="text-left p-2 font-medium">Time</th><th class="text-right p-2 font-medium">CPU</th><th class="text-right p-2 font-medium">Memory</th><th class="text-right p-2 font-medium">DB ms</th>
+            </tr></thead>
+            <tbody>{% for s in snapshots %}
+            <tr class="border-b border-slate-800/50"><td class="p-2 text-slate-400">{{ s.created_at|date:"H:i" }}</td><td class="p-2 text-right text-slate-300">{{ s.cpu_usage }}%</td><td class="p-2 text-right text-slate-300">{{ s.memory_usage }}%</td><td class="p-2 text-right text-slate-300">{{ s.db_response_ms }}ms</td></tr>
+            {% endfor %}</tbody>
+        </table></div>
+        {% else %}<p class="text-sm text-slate-500">No health snapshots recorded yet. Set up a cron job to collect periodic snapshots.</p>{% endif %}
+    </div>
+</div>
+{% endblock %}

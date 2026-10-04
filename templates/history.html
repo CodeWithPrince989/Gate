@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}History — GATE Tracker{% endblock %}
+{% block extra_head %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7787607648836537"
+        crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <!-- Header -->
+    <div>
+        <h1 class="text-3xl font-extrabold tracking-tight">Study History</h1>
+        <p class="text-gray-400 mt-1">Review and filter all your study sessions.</p>
+    </div>
+
+    <!-- ── Filters ──────────────────────────── -->
+    <form method="get" class="flex flex-wrap items-end gap-4 bg-surface-800 rounded-xl border border-white/5 p-5">
+        <!-- Subject -->
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Subject</label>
+            <select name="subject" class="form-input w-48">
+                <option value="">All Subjects</option>
+                {% for code, name in subjects %}
+                <option value="{{ code }}" {% if current_subject==code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Date from -->
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">From</label>
+            <input type="date" name="date_from" value="{{ current_from }}" class="form-input w-44">
+        </div>
+        <!-- Date to -->
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">To</label>
+            <input type="date" name="date_to" value="{{ current_to }}" class="form-input w-44">
+        </div>
+        <button type="submit"
+            class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm transition-colors">
+            Apply Filters
+        </button>
+        <a href="{% url 'tracker:history' %}"
+            class="px-4 py-2.5 rounded-xl bg-surface-700 hover:bg-surface-800 border border-white/5 text-gray-400 text-sm transition-colors">
+            Clear
+        </a>
+    </form>
+
+    <!-- ── Table ────────────────────────────── -->
+    {% if sessions %}
+    <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-sm">
+            <thead class="bg-surface-800 text-gray-400 text-xs uppercase tracking-wider">
+                <tr>
+                    <th class="px-5 py-3 text-left">Date</th>
+                    <th class="px-5 py-3 text-left">Subject</th>
+                    <th class="px-5 py-3 text-left">Study Type</th>
+                    <th class="px-5 py-3 text-right">Duration</th>
+                    <th class="px-5 py-3 text-right">Questions</th>
+                    <th class="px-5 py-3 text-right">Lecture Min</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for s in sessions %}
+                <tr class="hover:bg-white/[.02] transition-colors">
+                    <td class="px-5 py-3">{{ s.date }}</td>
+                    <td class="px-5 py-3"><span
+                            class="px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-300 text-xs font-medium">{{
+                            s.get_subject_display }}</span></td>
+                    <td class="px-5 py-3 text-gray-400">{{ s.study_type }}</td>
+                    <td class="px-5 py-3 text-right font-mono">{{ s.duration_minutes|floatformat:0 }} min</td>
+                    <td class="px-5 py-3 text-right font-mono">{{ s.questions_solved }}</td>
+                    <td class="px-5 py-3 text-right font-mono">{{ s.lecture_minutes }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-16 rounded-xl border border-dashed border-white/10 text-gray-500">
+        <p class="text-lg">No sessions found.</p>
+        <p class="text-sm mt-1">Try changing the filters or start a study session first.</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

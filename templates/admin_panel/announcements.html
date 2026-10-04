@@ -1,0 +1,45 @@
+{% extends "admin_panel/base.html" %}
+{% load admin_tags %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="glass-card p-6">
+        <h3 class="text-base font-semibold text-white mb-4">New Announcement</h3>
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Title" required class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <textarea name="message" placeholder="Message..." required rows="4" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+            <div class="grid grid-cols-2 gap-3">
+                <select name="type" class="bg-slate-800/50 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <option value="info">ℹ️ Info</option><option value="warning">⚠️ Warning</option><option value="success">✅ Success</option><option value="critical">🚨 Critical</option>
+                </select>
+                <select name="audience" class="bg-slate-800/50 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <option value="all">All Users</option><option value="premium">Premium Only</option><option value="free">Free Only</option>
+                </select>
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold transition-colors">Send Announcement</button>
+        </form>
+    </div>
+    <div class="lg:col-span-2">
+        <div class="glass-card p-6">
+            <h3 class="text-base font-semibold text-white mb-4">All Announcements</h3>
+            <div class="space-y-3">{% for a in announcements %}
+            <div class="p-4 rounded-xl border {% if a.notification_type == 'critical' %}border-red-500/30 bg-red-500/5{% elif a.notification_type == 'warning' %}border-amber-500/30 bg-amber-500/5{% elif a.notification_type == 'success' %}border-emerald-500/30 bg-emerald-500/5{% else %}border-blue-500/30 bg-blue-500/5{% endif %}">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="badge bg-{{ a.notification_type|status_color }}-500/15 text-{{ a.notification_type|status_color }}-400">{{ a.get_notification_type_display }}</span>
+                            {% if a.is_active %}<span class="badge bg-emerald-500/15 text-emerald-400">Live</span>{% else %}<span class="badge bg-slate-500/15 text-slate-400">Inactive</span>{% endif %}
+                            <span class="text-xs text-slate-500">{{ a.target_audience }}</span>
+                        </div>
+                        <h4 class="text-sm font-semibold text-white">{{ a.title }}</h4>
+                        <p class="text-xs text-slate-400 mt-1">{{ a.message|truncatewords:30 }}</p>
+                        <p class="text-xs text-slate-500 mt-2">{{ a.created_at|time_ago }} by {{ a.created_by.username|default:"System" }}</p>
+                    </div>
+                    <form method="POST" action="{% url 'admin_panel:announcement_toggle' a.id %}">{% csrf_token %}<button class="text-xs text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-slate-800">{% if a.is_active %}Deactivate{% else %}Activate{% endif %}</button></form>
+                </div>
+            </div>{% empty %}<p class="text-sm text-slate-500">No announcements yet.</p>{% endfor %}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /resources
+Allow: /feedback
+Allow: /news-blogs
+
+# Auth-only pages — no public content for crawlers
+Disallow: /dashboard
+Disallow: /analytics
+Disallow: /history
+Disallow: /progress
+Disallow: /start-study
+Disallow: /journey
+Disallow: /assistant
+
+Sitemap: https://gate-tracker-wzwf.vercel.app/sitemap.xml

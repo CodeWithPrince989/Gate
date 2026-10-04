@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090b"/>
+      <stop offset="100%" style="stop-color:#0f1419"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="200" cy="150" r="200" fill="#10b981" opacity="0.03"/>
+  <circle cx="1000" cy="480" r="250" fill="#10b981" opacity="0.03"/>
+  
+  <!-- Logo icon -->
+  <rect x="100" y="200" width="70" height="70" rx="18" fill="#10b981"/>
+  <text x="135" y="250" font-size="36" text-anchor="middle" fill="white">🌳</text>
+  
+  <!-- Title -->
+  <text x="195" y="230" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="white">GateTracker</text>
+  
+  <!-- Subtitle -->
+  <text x="100" y="300" font-family="system-ui, sans-serif" font-size="28" fill="#10b981" font-weight="600">GATE CSE 2027 Study Intelligence Tracker</text>
+  
+  <!-- Description -->
+  <text x="100" y="360" font-family="system-ui, sans-serif" font-size="22" fill="rgba(255,255,255,0.5)">Track hours • Questions solved • Progress heatmaps</text>
+  <text x="100" y="395" font-family="system-ui, sans-serif" font-size="22" fill="rgba(255,255,255,0.5)">Growth tree • Analytics • Curated YouTube resources</text>
+  
+  <!-- Features boxes -->
+  <rect x="100" y="440" width="180" height="50" rx="12" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" opacity="0.8"/>
+  <text x="190" y="472" font-family="system-ui, sans-serif" font-size="16" fill="#10b981" text-anchor="middle" font-weight="500">📊 Analytics</text>
+  
+  <rect x="300" y="440" width="180" height="50" rx="12" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" opacity="0.8"/>
+  <text x="390" y="472" font-family="system-ui, sans-serif" font-size="16" fill="#10b981" text-anchor="middle" font-weight="500">🔥 Heatmaps</text>
+  
+  <rect x="500" y="440" width="180" height="50" rx="12" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" opacity="0.8"/>
+  <text x="590" y="472" font-family="system-ui, sans-serif" font-size="16" fill="#10b981" text-anchor="middle" font-weight="500">🌳 Growth Tree</text>
+  
+  <rect x="700" y="440" width="180" height="50" rx="12" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" opacity="0.8"/>
+  <text x="790" y="472" font-family="system-ui, sans-serif" font-size="16" fill="#10b981" text-anchor="middle" font-weight="500">📹 Resources</text>
+  
+  <!-- Bottom bar -->
+  <rect x="0" y="560" width="1200" height="70" fill="rgba(16,185,129,0.05)"/>
+  <text x="100" y="602" font-family="system-ui, sans-serif" font-size="18" fill="rgba(255,255,255,0.3)">100% Free • Sign in with Google or GitHub • gate-tracker-wzwf.vercel.app</text>
+  
+  <!-- Border -->
+  <rect x="0" y="0" width="1200" height="630" fill="none" stroke="#10b981" stroke-width="2" opacity="0.1"/>
+</svg>

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Analytics — GATE Tracker{% endblock %}
+{% block extra_head %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7787607648836537"
+        crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <!-- Header -->
+    <div>
+        <h1 class="text-3xl font-extrabold tracking-tight">Analytics</h1>
+        <p class="text-gray-400 mt-1">Deep dive into your preparation progress.</p>
+    </div>
+
+    <!-- ── Summary stats ────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+        <div class="stat-card">
+            <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">Avg Daily Hours</span>
+            <p class="text-3xl font-extrabold mt-2 text-white">{{ avg_daily_hours }}<span
+                    class="text-base text-gray-500 ml-1">hrs</span></p>
+        </div>
+        <div class="stat-card">
+            <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">Most Studied</span>
+            <p class="text-xl font-bold mt-2 text-brand-400">{{ most_studied }}</p>
+        </div>
+        <div class="stat-card">
+            <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">Least Practiced</span>
+            <p class="text-xl font-bold mt-2 text-amber-400">{{ least_studied }}</p>
+        </div>
+        <div class="stat-card">
+            <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">Longest Streak</span>
+            <p class="text-3xl font-extrabold mt-2 text-white">{{ longest_streak }}<span
+                    class="text-base text-gray-500 ml-1">days</span></p>
+        </div>
+    </div>
+
+    <!-- ── Charts ────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Daily study hours (bar) -->
+        <div class="chart-card">
+            <h3 class="chart-title">Daily Study Hours (Last 14 Days)</h3>
+            <div class="chart-wrap"><canvas id="chartDailyHours"></canvas></div>
+        </div>
+
+        <!-- Questions per day (line) -->
+        <div class="chart-card">
+            <h3 class="chart-title">Questions Solved Per Day</h3>
+            <div class="chart-wrap"><canvas id="chartQuestions"></canvas></div>
+        </div>
+
+        <!-- Subject distribution (doughnut) -->
+        <div class="chart-card">
+            <h3 class="chart-title">Subject-wise Study Distribution</h3>
+            <div class="chart-wrap"><canvas id="chartSubjects"></canvas></div>
+        </div>
+
+        <!-- Lecture vs Practice (bar) -->
+        <div class="chart-card">
+            <h3 class="chart-title">Study Type Comparison</h3>
+            <div class="chart-wrap"><canvas id="chartTypes"></canvas></div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Palette
+    const COLORS = [
+        '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe',
+        '#10b981', '#34d399', '#f59e0b', '#ef4444',
+        '#06b6d4', '#8b5cf6', '#ec4899',
+    ];
+
+    fetch("{% url 'tracker:api_chart_data' %}")
+        .then(r => r.json())
+        .then(data => {
+            // 1 — Daily study hours
+            new Chart(document.getElementById('chartDailyHours'), {
+                type: 'bar',
+                data: {
+                    labels: data.daily_labels,
+                    datasets: [{
+                        label: 'Hours',
+                        data: data.daily_hours,
+                        backgroundColor: '#6366f1cc',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: chartOpts('Hours'),
+            });
+
+            // 2 — Questions per day
+            new Chart(document.getElementById('chartQuestions'), {
+                type: 'line',
+                data: {
+                    labels: data.daily_labels,
+                    datasets: [{
+                        label: 'Questions',
+                        data: data.daily_questions,
+                        borderColor: '#10b981',
+                        backgroundColor: '#10b98133',
+                        fill: true,
+                        tension: .4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#10b981',
+                    }]
+                },
+                options: chartOpts('Count'),
+            });
+
+            // 3 — Subject distribution
+            new Chart(document.getElementById('chartSubjects'), {
+                type: 'doughnut',
+                data: {
+                    labels: data.subject_labels,
+                    datasets: [{
+                        data: data.subject_values,
+                        backgroundColor: COLORS,
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#9ca3af', font: { size: 11 } } },
+                    },
+                },
+            });
+
+            // 4 — Study type comparison
+            new Chart(document.getElementById('chartTypes'), {
+                type: 'bar',
+                data: {
+                    labels: data.type_labels,
+                    datasets: [{
+                        label: 'Hours',
+                        data: data.type_values,
+                        backgroundColor: ['#06b6d4cc', '#f59e0bcc', '#6366f1cc', '#ec4899cc'],
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: chartOpts('Hours'),
+            });
+        });
+
+    function chartOpts(yLabel) {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { ticks: { color: '#6b7280' }, grid: { color: '#ffffff08' } },
+                y: { ticks: { color: '#6b7280' }, grid: { color: '#ffffff08' }, title: { display: true, text: yLabel, color: '#6b7280' } },
+            },
+            plugins: {
+                legend: { display: false },
+            },
+        };
+    }
+</script>
+{% endblock %}
