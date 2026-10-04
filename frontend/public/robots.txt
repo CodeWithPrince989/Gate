@@ -15,4 +15,4 @@ Disallow: /start-study
 Disallow: /journey
 Disallow: /assistant
 
-Sitemap: https://gate-tracker-wzwf.vercel.app/sitemap.xml
+Sitemap: https://gatepreperationtracker.vercel.app/sitemap.xml

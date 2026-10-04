@@ -46,7 +46,7 @@
   
   <!-- Bottom bar -->
   <rect x="0" y="560" width="1200" height="70" fill="rgba(16,185,129,0.05)"/>
-  <text x="100" y="602" font-family="system-ui, sans-serif" font-size="18" fill="rgba(255,255,255,0.3)">100% Free • Sign in with Google or GitHub • gate-tracker-wzwf.vercel.app</text>
+  <text x="100" y="602" font-family="system-ui, sans-serif" font-size="18" fill="rgba(255,255,255,0.3)">100% Free • Sign in with Google or GitHub • gatepreperationtracker.vercel.app</text>
   
   <!-- Border -->
   <rect x="0" y="0" width="1200" height="630" fill="none" stroke="#10b981" stroke-width="2" opacity="0.1"/>
