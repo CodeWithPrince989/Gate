@@ -15,6 +15,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Journey from './pages/Journey'
 import CommandCenter from './features/command-center/CommandCenter'
+import PlacementCenter from './features/placement/PlacementCenter'
 import { clearCachedDashboard } from './utils/dashboardCache'
 import { API_BASE, fetchWithCsrf } from './api/api'
 
@@ -88,6 +89,7 @@ export default function App() {
             <Route path="/weekly-review" element={<CommandCenter />} />
             <Route path="/goals" element={<CommandCenter />} />
             <Route path="/settings" element={<CommandCenter />} />
+            <Route path="/placement/*" element={<PlacementCenter />} />
             <Route element={<Layout user={user} onLogout={handleLogout} />}>
               <Route path="/start-study" element={<StartStudy />} />
               <Route path="/analytics" element={<Analytics />} />

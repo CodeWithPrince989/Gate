@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  Activity, ArrowDown, ArrowRight, ArrowUp, BarChart3, BookOpen, CalendarDays, Check, CheckCircle2, ChevronLeft, ChevronRight,
-  AlertCircle as CircleAlert, Clock3, Download, Flame, Play as Focus, GraduationCap, HelpCircle, ListChecks, Menu, Moon, Pencil, Plus, RotateCcw, Search,
+  Activity, AlertCircle as CircleAlert, ArrowDown, ArrowRight, ArrowUp, BarChart3, BookOpen, Briefcase, CalendarDays, Check, CheckCircle2, ChevronLeft, ChevronRight,
+  Clock3, Download, Flame, Play as Focus, GraduationCap, HelpCircle, ListChecks, Menu, Moon, Pencil, Plus, RotateCcw, Search,
   Settings, ShieldCheck, Sparkles, Target, Trash2, Trophy, X,
 } from 'lucide-react'
 import {
@@ -13,6 +13,7 @@ import './command-center.css'
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Activity },
+  { path: '/placement', label: '💼 Placement Preparation', icon: Briefcase },
   { path: '/planner', label: 'Daily Planner', icon: ListChecks },
   { path: '/calendar', label: 'Calendar', icon: CalendarDays },
   { path: '/syllabus', label: 'Syllabus', icon: BookOpen },
