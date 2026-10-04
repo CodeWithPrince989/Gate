@@ -9,6 +9,7 @@ import {
   createDemoData, dayRecord, formatMinutes, loadData, localDate, mistakeCategories, newId, saveData, stageNames, subjects,
   type DayRecord, type Goal, type Mistake, type Pyq, type Revision, type Task, type TaskStatus, type TestRecord, type Topic, type TrackerData,
 } from './data'
+import PreparationContribution from './PreparationContribution'
 import './command-center.css'
 
 const navItems = [
@@ -25,6 +26,7 @@ const navItems = [
   { path: '/command-analytics', label: 'Analytics', icon: BarChart3 },
   { path: '/weekly-review', label: 'Weekly Review', icon: CheckCircle2 },
   { path: '/goals', label: 'Goals', icon: Target },
+  { path: '/check-in', label: 'Check-in history', icon: CalendarDays },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 const percent = (value: number) => `${Math.max(0, Math.min(100, Math.round(value)))}%`
@@ -288,6 +290,7 @@ export default function CommandCenter() {
           <div className="cc-head-actions">{section === '/planner' && <input aria-label="Planner date" className="cc-input cc-date-input" type="date" value={selectedDate} onChange={event => setSelectedDate(event.target.value)} />}<button className="cc-button primary" onClick={() => setModal('task')}><Plus size={16} /> Add task</button></div>
         </div>
         {section === '/' && <DashboardView data={data} todayTasks={data.tasks.filter(task => task.date === todayKey)} revisions={data.revisions.filter(revision => revision.dueDate <= todayKey && revision.status !== 'Completed')} studyMinutes={data.sessions.filter(session => session.date === todayKey).reduce((sum, session) => sum + session.duration, 0)} stageAverage={stageAverage} pyqAttemptRate={pyqAttemptRate} accuracy={accuracy} readiness={readiness} tests={data.tests} onNavigate={navigate} onTaskStatus={updateTask} onQuick={kind => setModal(kind)} />}
+        {section === '/check-in' && <PreparationContribution historyOnly />}
         {section === '/planner' && <PlannerView data={data} date={selectedDate} day={currentDay} tasks={currentTasks} revisions={data.revisions.filter(revision => revision.dueDate === selectedDate && revision.status !== 'Completed')} studyMinutes={studyMinutes} setDate={setSelectedDate} updateTask={updateTask} deleteTask={id => setData(previous => ({ ...previous, tasks: previous.tasks.filter(task => task.id !== id) }))} updateDay={updateDay} addTask={addTask} onCompleteRevision={completeRevision} onCarry={carryTask} />}
         {section === '/calendar' && <CalendarView data={data} date={selectedDate} month={calendarMonth} setMonth={setCalendarMonth} mode={calendarMode} setMode={setCalendarMode} onSelect={date => { setSelectedDate(date); navigate('/planner') }} />}
         {section === '/syllabus' && <SyllabusView data={data} tab={paperTab} setTab={setPaperTab} updateTopic={updateTopic} onLearn={markLearned} />}
@@ -386,6 +389,7 @@ function DashboardView({ data, todayTasks, revisions, studyMinutes, stageAverage
         {repeated.length ? <div className="cc-mistake-summary">{repeated.map(([category, count]) => <div key={category}><span className="cc-mistake-icon"><CircleAlert size={14} /></span><span>{category}</span><strong>{count}</strong></div>)}</div> : <Empty title="No mistakes logged" detail="Capture a mistake to prevent repeating it." />}
       </Panel>
     </div>
+    <PreparationContribution />
     <Panel title="Your preparation loop" subtitle="Lecture watched is not the same as topic mastered." className="cc-loop-panel"><div className="cc-learning-loop">{['Theory', 'Questions', 'PYQs', 'Revision', 'Test', 'Mastered'].map((label, index) => <div key={label} className={index < 3 ? 'done' : ''}><span>{index < 3 ? <Check size={13} /> : index + 1}</span><strong>{label}</strong>{index < 5 && <i />}</div>)}</div></Panel>
     <div className="cc-shortcuts"><button onClick={() => onQuick('pyq')}><Plus size={16} /> Log a PYQ</button><button onClick={() => onNavigate('/timer')}><Clock3 size={16} /> Start a focus session</button><button onClick={() => onQuick('mistake')}><CircleAlert size={16} /> Capture a mistake</button></div>
     <div className="cc-footnote"><ShieldCheck size={14} /> Your preparation data is saved in this browser. Readiness is an internal planning metric, never a rank prediction.</div>
