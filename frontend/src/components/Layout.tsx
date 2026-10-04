@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
 import BreakReminder from './BreakReminder'
@@ -18,6 +18,7 @@ interface Props {
 export default function Layout({ user, onLogout }: Props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [dark, setDark] = useState(true)
+    const location = useLocation()
 
     useEffect(() => {
         const saved = localStorage.getItem('gate-dark')
@@ -28,6 +29,11 @@ export default function Layout({ user, onLogout }: Props) {
         localStorage.setItem('gate-dark', String(dark))
         document.documentElement.className = dark ? 'dark' : 'light'
     }, [dark])
+
+    // Close sidebar on route change (mobile)
+    useEffect(() => {
+        setSidebarOpen(false)
+    }, [location.pathname])
 
     return (
         <div className="app-shell min-h-screen flex overflow-x-hidden">
@@ -40,13 +46,16 @@ export default function Layout({ user, onLogout }: Props) {
                     onToggleDark={() => setDark(d => !d)}
                     user={user}
                 />
-                <main className="flex-1 min-w-0 px-4 py-6 md:px-10 md:py-10 mx-auto animate-page-enter max-w-[1400px] w-full">
+                <main
+                    key={location.pathname}
+                    className="flex-1 min-w-0 px-4 py-6 md:px-10 md:py-10 mx-auto animate-page-enter max-w-[1400px] w-full"
+                >
                     <Outlet />
                 </main>
                 <footer className="app-footer border-t px-6 py-4 text-[11px]">
                     <div className="flex flex-col gap-2 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                        <p className="theme-soft">
-                            Made with ♥ by <span className="font-medium gradient-text">Satya Sarthak Manohari</span>
+                        <p className="theme-soft flex items-center gap-1.5 justify-center sm:justify-start">
+                            Made with <span className="text-red-400 animate-breathe inline-block">♥</span> by <span className="font-medium gradient-text">Satya Sarthak Manohari</span>
                         </p>
                         <div className="flex items-center justify-center gap-4 sm:justify-end theme-soft">
                             <Link to="/about" className="footer-link hover:opacity-70">About Us</Link>

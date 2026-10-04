@@ -50,20 +50,27 @@ export default function StatCard({ label, value, sub, icon, iconBg }: Props) {
         : value
 
     return (
-        <div className="stat-card group">
+        <div className="stat-card group animate-fade-in">
             {/* Shimmer sweep layer */}
             <div className="stat-card-shimmer" />
+            {/* Top highlight */}
+            <div className="stat-card-highlight" />
 
             <div className="flex items-center justify-between mb-4">
                 <span className="section-label">{label}</span>
-                <div className={`stat-card-icon-ring w-9 h-9 rounded-xl flex items-center justify-center ${iconBg} transition-transform group-hover:scale-110`}>
+                <div className={`stat-card-icon-ring w-9 h-9 rounded-xl flex items-center justify-center ${iconBg} transition-all duration-300 group-hover:scale-110 group-hover:rotate-[-8deg] group-hover:shadow-lg`}>
                     {icon}
                 </div>
             </div>
-            <p className="text-[28px] font-semibold tracking-tight leading-none tabular-nums">
+            <p className="text-[28px] font-semibold tracking-tight leading-none tabular-nums transition-all duration-300">
                 {displayValue}
             </p>
-            {sub && <p className="text-[12px] theme-soft mt-1.5">{sub}</p>}
+            {sub && (
+                <p className="text-[12px] theme-soft mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1 h-1 rounded-full bg-emerald-400/50" />
+                    {sub}
+                </p>
+            )}
         </div>
     )
 }
