@@ -14,11 +14,11 @@ services:
       - key: ALLOWED_HOSTS
         value: ".onrender.com"
       - key: FRONTEND_URL
-        value: "https://gate-puce-phi.vercel.app"
+        value: "https://gatepreperationtracker.vercel.app"
       - key: CORS_ALLOWED_ORIGINS
-        value: "https://gate-puce-phi.vercel.app"
+        value: "https://gatepreperationtracker.vercel.app"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://gate-puce-phi.vercel.app"
+        value: "https://gatepreperationtracker.vercel.app"
       - key: GEMINI_MODEL
         value: "gemini-1.5-flash"
       - key: GEMINI_API_VERSION
