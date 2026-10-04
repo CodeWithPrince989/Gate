@@ -88,6 +88,7 @@ export default function App() {
             <Route path="/command-analytics" element={<CommandCenter />} />
             <Route path="/weekly-review" element={<CommandCenter />} />
             <Route path="/goals" element={<CommandCenter />} />
+            <Route path="/check-in" element={<CommandCenter />} />
             <Route path="/settings" element={<CommandCenter />} />
             <Route path="/placement/*" element={<PlacementCenter />} />
             <Route element={<Layout user={user} onLogout={handleLogout} />}>
